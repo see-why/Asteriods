@@ -24,6 +24,8 @@ def main():
     AsteroidField.containers = (updatable)
     field = AsteroidField()
 
+    paused = False
+
     dt = 0
     game_clock = pygame.time.Clock()
 
@@ -31,24 +33,35 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    print("Space button clicked")
+                    paused = not paused
 
-        for sprite in updatable:
-            sprite.update(dt)
+        if not paused:
+            for sprite in updatable:
+                sprite.update(dt)
 
-        for asteroid in asteroids:
-            if asteroid.collides(player):
-                print("Game Over")
-                sys.exit()
-            
-            for shot in shots:
-                if asteroid.collides(shot):
-                    asteroid.split()
-                    shot.kill()
+            for asteroid in asteroids:
+                if asteroid.collides(player):
+                    print("Game Over")
+                    sys.exit()
+                
+                for shot in shots:
+                    if asteroid.collides(shot):
+                        asteroid.split()
+                        shot.kill()
 
         screen.fill("black")
 
         for sprite in drawable:
             sprite.draw(screen)
+        
+        if paused:
+            font = pygame.font.Font(None, 74)
+            text = font.render('PAUSED', False, 'red')
+            text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+            screen.blit(text, text_rect)
 
         pygame.display.flip()
         dt = game_clock.tick(60) / 10000
