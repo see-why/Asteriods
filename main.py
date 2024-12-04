@@ -51,11 +51,17 @@ def main():
                     if asteroid.collides(shot):
                         asteroid.split()
                         shot.kill()
+                        player.score += 10
 
         screen.fill("black")
 
         for sprite in drawable:
             sprite.draw(screen)
+
+        font = pygame.font.Font(None, 36)
+        score_text = font.render(f'Score: {player.score}', False, 'green')
+        score_rect = score_text.get_rect(topleft=(10, 10))
+        screen.blit(score_text, score_rect)
         
         if paused:
             font = pygame.font.Font(None, 74)
