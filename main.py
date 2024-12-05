@@ -51,7 +51,8 @@ def main():
                     if asteroid.collides(shot):
                         asteroid.split()
                         shot.kill()
-                        player.score += 10
+                        point = int(10000 / asteroid.radius)
+                        player.score += point
 
         screen.fill("black")
 
