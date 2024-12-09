@@ -28,7 +28,7 @@ def main():
 
     dt = 0
     game_clock = pygame.time.Clock()
-    lives = 3
+    lives = 5
     invulnerable_timer = 0  # Temporary invulnerability after being hit
     
     while True:
@@ -43,7 +43,8 @@ def main():
         if not paused:
             # Update invulnerability timer
             if invulnerable_timer > 0:
-                invulnerable_timer -= dt
+                invulnerable_timer -= (dt * 100)
+                print(f"invulnerable_timer: #{invulnerable_timer}")
             
             for sprite in updatable:
                 sprite.update(dt)
@@ -72,7 +73,14 @@ def main():
         screen.fill("black")
 
         for sprite in drawable:
-            sprite.draw(screen)
+            color = None
+            if sprite == player:
+                if invulnerable_timer > 0:
+                    # Flash red during invulnerability
+                    color = "red" if int(invulnerable_timer / 4) % 2 == 0 else None
+                else:
+                    color = "green"
+            sprite.draw(screen, color) if color else sprite.draw(screen)
 
         font = pygame.font.Font(None, 36)
         score_text = font.render(f'Score: {player.score}', False, 'green')
@@ -93,12 +101,8 @@ def main():
                 (15 + i*30, 70)
             ])
 
-        # Flash player when invulnerable
-        if invulnerable_timer > 0 and int(invulnerable_timer / 10) % 2 == 0:
-            player.draw(screen)
-
         pygame.display.flip()
-        dt = game_clock.tick(60) / 10000
+        dt = game_clock.tick(60) / 1000
 
 
 if __name__ == "__main__":
