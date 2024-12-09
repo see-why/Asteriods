@@ -28,7 +28,9 @@ def main():
 
     dt = 0
     game_clock = pygame.time.Clock()
-
+    lives = 3
+    invulnerable_timer = 0  # Temporary invulnerability after being hit
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -39,14 +41,27 @@ def main():
                     paused = not paused
 
         if not paused:
+            # Update invulnerability timer
+            if invulnerable_timer > 0:
+                invulnerable_timer -= dt
+            
             for sprite in updatable:
                 sprite.update(dt)
 
             for asteroid in asteroids:
-                if asteroid.collides(player):
-                    print("Game Over")
-                    sys.exit()
-                
+                if asteroid.collides(player) and invulnerable_timer <= 0:
+                    lives -= 1
+                    invulnerable_timer = 200  # 2 seconds of invulnerability
+                    if lives <= 0:
+                        print("Game Over")
+                        sys.exit()
+                    else:
+                        # Reset player position after hit
+                        player.position.x = SCREEN_WIDTH / 2
+                        player.position.y = SCREEN_HEIGHT / 2
+                        player.velocity.x = 0
+                        player.velocity.y = 0
+
                 for shot in shots:
                     if asteroid.collides(shot):
                         asteroid.split()
@@ -69,6 +84,18 @@ def main():
             text = font.render('PAUSED', False, 'red')
             text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
             screen.blit(text, text_rect)
+
+        # Draw lives
+        for i in range(lives):
+            pygame.draw.polygon(screen, 'green', [
+                (30 + i*30, 50),
+                (45 + i*30, 70),
+                (15 + i*30, 70)
+            ])
+
+        # Flash player when invulnerable
+        if invulnerable_timer > 0 and int(invulnerable_timer / 10) % 2 == 0:
+            player.draw(screen)
 
         pygame.display.flip()
         dt = game_clock.tick(60) / 10000
