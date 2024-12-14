@@ -6,6 +6,7 @@ from player import Player
 from asteroid import Asteroid
 from shot import Shot
 from asteroidfield import AsteroidField
+from dj import Dj
 
 def main():
     pygame.init()
@@ -51,6 +52,7 @@ def main():
 
             for asteroid in asteroids:
                 if asteroid.collides(player) and invulnerable_timer <= 0:
+                    Dj.player_explosion_mixer.play()
                     lives -= 1
                     invulnerable_timer = 200  # 2 seconds of invulnerability
                     if lives <= 0:
@@ -65,6 +67,7 @@ def main():
 
                 for shot in shots:
                     if asteroid.collides(shot):
+                        Dj.asteroid_explosion_mixer.play()
                         asteroid.split()
                         shot.kill()
                         point = int(1000 / asteroid.radius)
