@@ -45,7 +45,6 @@ def main():
             # Update invulnerability timer
             if invulnerable_timer > 0:
                 invulnerable_timer -= (dt * 100)
-                print(f"invulnerable_timer: #{invulnerable_timer}")
             
             for sprite in updatable:
                 sprite.update(dt)
@@ -56,7 +55,22 @@ def main():
                     lives -= 1
                     invulnerable_timer = 200  # 2 seconds of invulnerability
                     if lives <= 0:
-                        print("Game Over")
+                        game_over_timer = 5000
+
+                        screen.fill("black")
+                        font = pygame.font.Font(None, 74)
+                        text = font.render('GAME OVER', False, 'red')
+                        text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+                        screen.blit(text, text_rect)
+                        
+                        score_text = font.render(f'Final Score: {player.score}', False, 'green')
+                        score_rect = score_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 80))
+                        screen.blit(score_text, score_rect)
+                        pygame.display.flip()
+
+                        while game_over_timer > 0:
+                            game_over_timer -= (dt/ 1000)
+                            
                         sys.exit()
                     else:
                         # Reset player position after hit
