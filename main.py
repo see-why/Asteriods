@@ -56,18 +56,7 @@ def main():
                     invulnerable_timer = 200  # 2 seconds of invulnerability
                     if lives <= 0:
                         game_over_timer = 5000
-
-                        screen.fill("black")
-                        font = pygame.font.Font(None, 74)
-                        text = font.render('GAME OVER', False, 'red')
-                        text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-                        screen.blit(text, text_rect)
-                        
-                        score_text = font.render(f'Final Score: {player.score}', False, 'green')
-                        score_rect = score_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 80))
-                        screen.blit(score_text, score_rect)
-                        pygame.display.flip()
-
+                        print_game_over(screen, player)
                         while game_over_timer > 0:
                             game_over_timer -= (dt/ 1000)
                             
@@ -120,6 +109,18 @@ def main():
 
         pygame.display.flip()
         dt = game_clock.tick(60) / 1000
+
+def print_game_over(screen, player):
+    screen.fill("black")
+    font = pygame.font.Font(None, 74)
+    text = font.render('GAME OVER', False, 'red')
+    text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    screen.blit(text, text_rect)
+    
+    score_text = font.render(f'Final Score: {player.score}', False, 'green')
+    score_rect = score_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 80))
+    screen.blit(score_text, score_rect)
+    pygame.display.flip()
 
 
 if __name__ == "__main__":
