@@ -94,10 +94,7 @@ def main():
         screen.blit(score_text, score_rect)
         
         if paused:
-            font = pygame.font.Font(None, 74)
-            text = font.render('PAUSED', False, 'red')
-            text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-            screen.blit(text, text_rect)
+            print_pause(screen)
 
         # Draw lives
         for i in range(lives):
@@ -121,6 +118,12 @@ def print_game_over(screen, player):
     score_rect = score_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 80))
     screen.blit(score_text, score_rect)
     pygame.display.flip()
+
+def print_pause(screen):
+    font = pygame.font.Font(None, 74)
+    text = font.render('PAUSED', False, 'red')
+    text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    screen.blit(text, text_rect)
 
 
 if __name__ == "__main__":
