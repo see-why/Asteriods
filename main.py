@@ -38,7 +38,6 @@ def main():
                 return
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    print("Space button clicked")
                     paused = not paused
 
         if not paused:
