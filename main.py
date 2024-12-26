@@ -61,11 +61,7 @@ def main():
                             
                         sys.exit()
                     else:
-                        # Reset player position after hit
-                        player.position.x = SCREEN_WIDTH / 2
-                        player.position.y = SCREEN_HEIGHT / 2
-                        player.velocity.x = 0
-                        player.velocity.y = 0
+                        player.reset_position()
 
                 for shot in shots:
                     if asteroid.collides(shot):
