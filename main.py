@@ -83,10 +83,7 @@ def main():
                     color = "green"
             sprite.draw(screen, color) if color else sprite.draw(screen)
 
-        font = pygame.font.Font(None, 36)
-        score_text = font.render(f'Score: {player.score}', False, 'green')
-        score_rect = score_text.get_rect(topleft=(10, 10))
-        screen.blit(score_text, score_rect)
+        print_player_score(screen, player.score)
         
         if paused:
             print_pause(screen)
@@ -122,6 +119,12 @@ def print_lives(screen, lives):
             (45 + i*30, 70),
             (15 + i*30, 70)
         ])
+
+def print_player_score(screen, score):
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f'Score: {score}', False, 'green')
+    score_rect = score_text.get_rect(topleft=(10, 10))
+    screen.blit(score_text, score_rect)
 
 
 
