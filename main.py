@@ -92,12 +92,7 @@ def main():
             print_pause(screen)
 
         # Draw lives
-        for i in range(lives):
-            pygame.draw.polygon(screen, 'green', [
-                (30 + i*30, 50),
-                (45 + i*30, 70),
-                (15 + i*30, 70)
-            ])
+        print_lives(screen, lives)
 
         pygame.display.flip()
         dt = game_clock.tick(60) / 1000
@@ -119,6 +114,15 @@ def print_pause(screen):
     text = font.render('PAUSED', False, 'red')
     text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
     screen.blit(text, text_rect)
+
+def print_lives(screen, lives):
+    for i in range(lives):
+        pygame.draw.polygon(screen, 'green', [
+            (30 + i*30, 50),
+            (45 + i*30, 70),
+            (15 + i*30, 70)
+        ])
+
 
 
 if __name__ == "__main__":
