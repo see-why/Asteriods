@@ -33,6 +33,8 @@ Confirm this by running:
 - Press `K` to kill!!!
 - Press `Spacebar` to pause and resume.
 
+## [Download and play locaclly](https://see-why.itch.io/asteroids)
+
 ## Author
 👤 **Cyril Iyadi**
 
