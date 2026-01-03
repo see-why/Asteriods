@@ -11,6 +11,8 @@ class Player(CircleShape):
         self.rotation = 0
         self.shoot_timer = 0
         self.score = 0
+        self.shield_active = False
+        self.shield_timer = 0
     
     # in the player class
     def triangle(self):
@@ -23,6 +25,9 @@ class Player(CircleShape):
     
     def draw(self, screen, color="white"):
         pygame.draw.polygon(screen, color, self.triangle(), 2)
+        # Draw shield if active
+        if self.shield_active:
+            pygame.draw.circle(screen, "cyan", self.position, self.radius * 1.5, 2)
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -41,6 +46,13 @@ class Player(CircleShape):
         # k key press, K in Kill
         if keys[pygame.K_k]:
             self.rate_limit_shot(dt)
+        
+        # Update shield timer
+        if self.shield_timer > 0:
+            self.shield_timer -= dt
+            self.shield_active = True
+        else:
+            self.shield_active = False
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -63,3 +75,8 @@ class Player(CircleShape):
         self.position.y = SCREEN_HEIGHT / 2
         self.velocity.x = 0
         self.velocity.y = 0
+    
+    def activate_shield(self, duration=5):
+        """Activate shield for a specified duration"""
+        self.shield_timer = duration
+        self.shield_active = True
