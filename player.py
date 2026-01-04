@@ -13,6 +13,8 @@ class Player(CircleShape):
         self.score = 0
         self.shield_active = False
         self.shield_timer = 0
+        self.rapid_fire_active = False
+        self.rapid_fire_timer = 0
     
     # in the player class
     def triangle(self):
@@ -53,6 +55,13 @@ class Player(CircleShape):
             self.shield_active = True
         else:
             self.shield_active = False
+        
+        # Update rapid fire timer
+        if self.rapid_fire_timer > 0:
+            self.rapid_fire_timer -= dt
+            self.rapid_fire_active = True
+        else:
+            self.rapid_fire_active = False
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -63,7 +72,9 @@ class Player(CircleShape):
         if self.shoot_timer > 0:
             return
         self.shoot()
-        self.shoot_timer = PLAYER_SHOOT_COOLDOWN
+        # Rapid fire reduces cooldown
+        cooldown = PLAYER_SHOOT_COOLDOWN * 0.3 if self.rapid_fire_active else PLAYER_SHOOT_COOLDOWN
+        self.shoot_timer = cooldown
 
     def shoot(self):
         shot = Shot(self.position.x, self.position.y)
@@ -80,3 +91,8 @@ class Player(CircleShape):
         """Activate shield for a specified duration"""
         self.shield_timer = duration
         self.shield_active = True
+    
+    def activate_rapid_fire(self, duration=5):
+        """Activate rapid fire for a specified duration"""
+        self.rapid_fire_timer = duration
+        self.rapid_fire_active = True
