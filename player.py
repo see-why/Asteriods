@@ -15,6 +15,8 @@ class Player(CircleShape):
         self.shield_timer = 0
         self.rapid_fire_active = False
         self.rapid_fire_timer = 0
+        self.trail_positions = []
+        self.max_trail_length = 20
     
     # in the player class
     def triangle(self):
@@ -26,6 +28,12 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen, color="white"):
+        # Draw trail
+        for i, pos in enumerate(self.trail_positions):
+            alpha = int(255 * (i / len(self.trail_positions)))
+            trail_color = (alpha, alpha, alpha)
+            pygame.draw.circle(screen, trail_color, pos, 2)
+        
         pygame.draw.polygon(screen, color, self.triangle(), 2)
         # Draw shield if active
         if self.shield_active:
@@ -35,6 +43,11 @@ class Player(CircleShape):
         self.rotation += PLAYER_TURN_SPEED * dt
 
     def update(self, dt):
+        # Update trail
+        self.trail_positions.append(pygame.Vector2(self.position.x, self.position.y))
+        if len(self.trail_positions) > self.max_trail_length:
+            self.trail_positions.pop(0)
+        
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
