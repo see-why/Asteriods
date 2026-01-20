@@ -8,6 +8,7 @@ class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x, y, radius)
         self.rotation = 0
+        self.rotation_speed = random.uniform(-50, 50)
         self.asteroid_type = self.determine_type(radius)
         self.color = self.get_color()
         self.health_multiplier = self.get_health_multiplier()
@@ -44,6 +45,7 @@ class Asteroid(CircleShape):
 
     def update(self, dt):
        self.position += self.velocity * dt
+       self.rotation += self.rotation_speed * dt
 
     def split(self):
         self.kill()
