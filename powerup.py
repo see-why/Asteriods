@@ -13,7 +13,8 @@ class PowerUp(CircleShape):
         self.colors = {
             "shield": "cyan",
             "rapid_fire": "yellow",
-            "health": "green"
+            "health": "green",
+            "extra_life": "red"
         }
     
     def draw(self, screen):
@@ -34,6 +35,6 @@ class PowerUp(CircleShape):
         y = random.randint(50, SCREEN_HEIGHT - 50)
         
         if powerup_type is None:
-            powerup_type = random.choice(["shield", "rapid_fire", "health"])
+            powerup_type = random.choice(["shield", "rapid_fire", "health", "extra_life"])
         
         return cls(x, y, powerup_type)
