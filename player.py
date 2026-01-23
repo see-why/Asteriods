@@ -17,6 +17,8 @@ class Player(CircleShape):
         self.rapid_fire_timer = 0
         self.trail_positions = []
         self.max_trail_length = 20
+        self.acceleration = pygame.Vector2(0, 0)
+        self.max_speed = PLAYER_SPEED
     
     # in the player class
     def triangle(self):
@@ -78,7 +80,14 @@ class Player(CircleShape):
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+        self.acceleration = forward * PLAYER_SPEED * 3
+        self.velocity += self.acceleration * dt
+        # Cap speed
+        if self.velocity.length() > self.max_speed:
+            self.velocity = self.velocity.normalize() * self.max_speed
+        # Apply drag
+        self.velocity *= 0.98
+        self.position += self.velocity * dt
 
     def rate_limit_shot(self, dt):
         self.shoot_timer -= dt
