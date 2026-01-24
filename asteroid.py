@@ -12,6 +12,8 @@ class Asteroid(CircleShape):
         self.asteroid_type = self.determine_type(radius)
         self.color = self.get_color()
         self.health_multiplier = self.get_health_multiplier()
+        self.trail_positions = []
+        self.max_trail_length = 5
     
     def determine_type(self, radius):
         """Determine asteroid type based on radius"""
@@ -41,9 +43,21 @@ class Asteroid(CircleShape):
         return multipliers.get(self.asteroid_type, 1.0)
 
     def draw(self, screen):
+        # Draw trail for fast-moving asteroids
+        if self.velocity.length() > 100:
+            for i, pos in enumerate(self.trail_positions):
+                alpha = int(100 * (i / max(1, len(self.trail_positions))))
+                pygame.draw.circle(screen, self.color, pos, self.radius // 2, 1)
+        
         pygame.draw.circle(screen, self.color, self.position, self.radius, 2)
 
     def update(self, dt):
+       # Update trail
+       if self.velocity.length() > 100:
+           self.trail_positions.append(pygame.Vector2(self.position.x, self.position.y))
+           if len(self.trail_positions) > self.max_trail_length:
+               self.trail_positions.pop(0)
+       
        self.position += self.velocity * dt
        self.rotation += self.rotation_speed * dt
 
