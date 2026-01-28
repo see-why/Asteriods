@@ -5,6 +5,7 @@ class AudioSettings:
         self.music_enabled = True
         self.sfx_volume = 1.0
         self.music_volume = 0.5
+        self.master_volume = 1.0
     
     def toggle_music(self):
         """Toggle background music on/off"""
@@ -24,3 +25,11 @@ class AudioSettings:
     def set_music_volume(self, volume):
         """Set music volume (0.0 to 1.0)"""
         self.music_volume = max(0.0, min(1.0, volume))
+    
+    def set_master_volume(self, volume):
+        """Set master volume (0.0 to 1.0)"""
+        self.master_volume = max(0.0, min(1.0, volume))
+    
+    def get_effective_sfx_volume(self):
+        """Get effective SFX volume with master"""
+        return self.sfx_volume * self.master_volume
