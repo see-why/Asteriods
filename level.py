@@ -27,4 +27,6 @@ class LevelSystem:
     
     def get_progress(self):
         """Get progress towards next level as percentage"""
+        if self.asteroids_per_level == 0:
+            return 0
         return (self.asteroids_destroyed / self.asteroids_per_level) * 100
