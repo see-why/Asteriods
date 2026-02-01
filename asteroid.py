@@ -46,8 +46,11 @@ class Asteroid(CircleShape):
         # Draw trail for fast-moving asteroids
         if self.velocity.length() > 100:
             for i, pos in enumerate(self.trail_positions):
-                alpha = int(100 * (i / max(1, len(self.trail_positions))))
-                pygame.draw.circle(screen, self.color, pos, self.radius // 2, 1)
+                # Fade trail based on position (older = dimmer)
+                fade = i / max(1, len(self.trail_positions))
+                # Reduce circle size for trail effect
+                trail_radius = max(1, int(self.radius // 2 * fade))
+                pygame.draw.circle(screen, self.color, pos, trail_radius, 1)
         
         pygame.draw.circle(screen, self.color, self.position, self.radius, 2)
 
