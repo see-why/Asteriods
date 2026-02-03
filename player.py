@@ -19,6 +19,7 @@ class Player(CircleShape):
         self.max_trail_length = 20
         self.acceleration = pygame.Vector2(0, 0)
         self.max_speed = PLAYER_SPEED
+        self.weapon_type = "normal"  # Default weapon type
     
     # in the player class
     def triangle(self):
@@ -99,7 +100,7 @@ class Player(CircleShape):
         self.shoot_timer = cooldown
 
     def shoot(self):
-        shot = Shot(self.position.x, self.position.y)
+        shot = Shot(self.position.x, self.position.y, self.weapon_type)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         Dj.shoot_mixer.play()
 
