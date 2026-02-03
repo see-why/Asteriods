@@ -3,6 +3,8 @@ import random
 from circleshape import CircleShape
 
 class Particle(CircleShape):
+    containers = ()
+    
     def __init__(self, x, y, velocity, color="white", lifetime=1.0):
         super().__init__(x, y, random.uniform(1, 3))
         self.velocity = velocity
