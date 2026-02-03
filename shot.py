@@ -14,9 +14,13 @@ class Shot(CircleShape):
         color = "cyan" if self.weapon_type == "pierce" else "white"
         pygame.draw.line(screen, color, self.position, end_pos, 2)
     
-    def can_pierce(self):
-        """Check if shot can pierce through asteroids"""
-        if self.weapon_type == "pierce" and self.pierce_count > 0:
+    def has_pierce(self):
+        """Check if shot can pierce without consuming a charge"""
+        return self.weapon_type == "pierce" and self.pierce_count > 0
+    
+    def consume_pierce(self):
+        """Consume one pierce charge and return True if successful"""
+        if self.has_pierce():
             self.pierce_count -= 1
             return True
         return False
