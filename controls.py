@@ -20,7 +20,8 @@ class ControlSettings:
             try:
                 with open(self.controls_file, 'r') as f:
                     return json.load(f)
-            except:
+            except Exception as e:
+                print(f"Warning: Failed to load controls: {e}")
                 return self.default_controls.copy()
         return self.default_controls.copy()
     

@@ -12,7 +12,8 @@ class HighScoreManager:
             try:
                 with open(self.filename, 'r') as f:
                     return json.load(f)
-            except:
+            except Exception as e:
+                print(f"Warning: Failed to load high scores: {e}")
                 return []
         return []
     
