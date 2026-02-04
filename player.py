@@ -34,10 +34,11 @@ class Player(CircleShape):
     
     def draw(self, screen, color="white"):
         # Draw trail
-        for i, pos in enumerate(self.trail_positions):
-            alpha = int(255 * (i / len(self.trail_positions)))
-            trail_color = (alpha, alpha, alpha)
-            pygame.draw.circle(screen, trail_color, pos, 2)
+        if self.trail_positions:  # Prevent division by zero
+            for i, pos in enumerate(self.trail_positions):
+                alpha = int(255 * (i / len(self.trail_positions)))
+                trail_color = (alpha, alpha, alpha)
+                pygame.draw.circle(screen, trail_color, pos, 2)
         
         pygame.draw.polygon(screen, color, self.triangle(), 2)
         # Draw shield if active
