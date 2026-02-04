@@ -8,12 +8,61 @@ class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x, y, radius)
         self.rotation = 0
+        self.rotation_speed = random.uniform(-50, 50)
+        self.asteroid_type = self.determine_type(radius)
+        self.color = self.get_color()
+        self.health_multiplier = self.get_health_multiplier()
+        self.trail_positions = []
+        self.max_trail_length = 5
+    
+    def determine_type(self, radius):
+        """Determine asteroid type based on radius"""
+        if radius >= ASTEROID_MIN_RADIUS * 3:
+            return "large"
+        elif radius >= ASTEROID_MIN_RADIUS * 2:
+            return "medium"
+        else:
+            return "small"
+    
+    def get_color(self):
+        """Get color based on asteroid type"""
+        colors = {
+            "large": "red",
+            "medium": "orange",
+            "small": "white"
+        }
+        return colors.get(self.asteroid_type, "white")
+    
+    def get_health_multiplier(self):
+        """Get health multiplier based on type"""
+        multipliers = {
+            "large": 2.0,
+            "medium": 1.5,
+            "small": 1.0
+        }
+        return multipliers.get(self.asteroid_type, 1.0)
 
     def draw(self, screen):
-        pygame.draw.circle(screen, "white", self.position, self.radius, 2)
+        # Draw trail for fast-moving asteroids
+        if self.velocity.length() > 100:
+            for i, pos in enumerate(self.trail_positions):
+                # Fade trail based on position (older = dimmer)
+                fade = i / max(1, len(self.trail_positions))
+                # Reduce circle size for trail effect
+                trail_radius = max(1, int(self.radius // 2 * fade))
+                pygame.draw.circle(screen, self.color, pos, trail_radius, 1)
+        
+        pygame.draw.circle(screen, self.color, self.position, self.radius, 2)
 
     def update(self, dt):
+       # Update trail
+       if self.velocity.length() > 100:
+           self.trail_positions.append(pygame.Vector2(self.position.x, self.position.y))
+           if len(self.trail_positions) > self.max_trail_length:
+               self.trail_positions.pop(0)
+       
        self.position += self.velocity * dt
+       self.rotation += self.rotation_speed * dt
 
     def split(self):
         self.kill()

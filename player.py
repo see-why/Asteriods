@@ -3,7 +3,9 @@ import pygame
 from dj import Dj
 from circleshape import CircleShape
 from shot import Shot
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import (PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, 
+                       PLAYER_SHOOT_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, PHYSICS_MOVEMENT,
+                       PLAYER_ACCELERATION, PLAYER_DRAG)
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -11,6 +13,15 @@ class Player(CircleShape):
         self.rotation = 0
         self.shoot_timer = 0
         self.score = 0
+        self.shield_active = False
+        self.shield_timer = 0
+        self.rapid_fire_active = False
+        self.rapid_fire_timer = 0
+        self.trail_positions = []
+        self.max_trail_length = 20
+        self.acceleration = pygame.Vector2(0, 0)
+        self.max_speed = PLAYER_SPEED
+        self.weapon_type = "normal"  # Default weapon type
     
     # in the player class
     def triangle(self):
@@ -22,12 +33,27 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen, color="white"):
+        # Draw trail
+        if self.trail_positions:  # Prevent division by zero
+            for i, pos in enumerate(self.trail_positions):
+                alpha = int(255 * (i / len(self.trail_positions)))
+                trail_color = (alpha, alpha, alpha)
+                pygame.draw.circle(screen, trail_color, pos, 2)
+        
         pygame.draw.polygon(screen, color, self.triangle(), 2)
+        # Draw shield if active
+        if self.shield_active:
+            pygame.draw.circle(screen, "cyan", self.position, self.radius * 1.5, 2)
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
 
     def update(self, dt):
+        # Update trail
+        self.trail_positions.append(pygame.Vector2(self.position.x, self.position.y))
+        if len(self.trail_positions) > self.max_trail_length:
+            self.trail_positions.pop(0)
+        
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -41,20 +67,51 @@ class Player(CircleShape):
         # k key press, K in Kill
         if keys[pygame.K_k]:
             self.rate_limit_shot(dt)
+        
+        # Update shield timer
+        if self.shield_timer > 0:
+            self.shield_timer -= dt
+            self.shield_active = True
+        else:
+            self.shield_active = False
+        
+        # Update rapid fire timer
+        if self.rapid_fire_timer > 0:
+            self.rapid_fire_timer -= dt
+            self.rapid_fire_active = True
+        else:
+            self.rapid_fire_active = False
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+        
+        if PHYSICS_MOVEMENT:
+            # Physics-based movement: acceleration + inertia + drag
+            # Ship continues moving when key is released (realistic space physics)
+            self.acceleration = forward * PLAYER_ACCELERATION
+            self.velocity += self.acceleration * dt
+            # Cap speed
+            if self.velocity.length() > self.max_speed:
+                self.velocity = self.velocity.normalize() * self.max_speed
+            # Apply drag
+            self.velocity *= PLAYER_DRAG
+            self.position += self.velocity * dt
+        else:
+            # Classic movement: direct position update
+            # Ship stops immediately when key is released (classic Asteroids behavior)
+            self.position += forward * PLAYER_SPEED * dt
 
     def rate_limit_shot(self, dt):
         self.shoot_timer -= dt
         if self.shoot_timer > 0:
             return
         self.shoot()
-        self.shoot_timer = PLAYER_SHOOT_COOLDOWN
+        # Rapid fire reduces cooldown
+        cooldown = PLAYER_SHOOT_COOLDOWN * 0.3 if self.rapid_fire_active else PLAYER_SHOOT_COOLDOWN
+        self.shoot_timer = cooldown
 
     def shoot(self):
-        shot = Shot(self.position.x, self.position.y)
+        shot = Shot(self.position.x, self.position.y, self.weapon_type)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         Dj.shoot_mixer.play()
 
@@ -63,3 +120,13 @@ class Player(CircleShape):
         self.position.y = SCREEN_HEIGHT / 2
         self.velocity.x = 0
         self.velocity.y = 0
+    
+    def activate_shield(self, duration=5):
+        """Activate shield for a specified duration"""
+        self.shield_timer = duration
+        self.shield_active = True
+    
+    def activate_rapid_fire(self, duration=5):
+        """Activate rapid fire for a specified duration"""
+        self.rapid_fire_timer = duration
+        self.rapid_fire_active = True
