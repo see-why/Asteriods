@@ -8,6 +8,7 @@ class AsteroidFragment:
         self.velocity = velocity
         self.color = color
         self.lifetime = random.uniform(0.5, 1.5)
+        self.max_lifetime = self.lifetime  # Store initial lifetime
         self.size = random.randint(1, 3)
         self.rotation = random.uniform(0, 360)
         self.rotation_speed = random.uniform(-200, 200)
@@ -22,8 +23,15 @@ class AsteroidFragment:
     def draw(self, screen):
         """Draw fragment"""
         if self.lifetime > 0:
-            alpha = int(255 * (self.lifetime / 1.5))
-            pygame.draw.circle(screen, self.color, self.position, self.size)
+            # Fade by scaling brightness based on remaining lifetime
+            fade = self.lifetime / max(0.01, self.max_lifetime)
+            base_color = pygame.Color(self.color)
+            faded_color = (
+                int(base_color.r * fade),
+                int(base_color.g * fade),
+                int(base_color.b * fade)
+            )
+            pygame.draw.circle(screen, faded_color, self.position, self.size)
     
     def is_alive(self):
         """Check if fragment is still visible"""
