@@ -14,11 +14,10 @@ class AsteroidWarning:
     
     def is_offscreen(self, asteroid):
         """Check if asteroid is outside screen bounds"""
-        margin = 50
-        return (asteroid.position.x < -margin or 
-                asteroid.position.x > SCREEN_WIDTH + margin or
-                asteroid.position.y < -margin or 
-                asteroid.position.y > SCREEN_HEIGHT + margin)
+        return (asteroid.position.x < -self.warning_distance or 
+                asteroid.position.x > SCREEN_WIDTH + self.warning_distance or
+                asteroid.position.y < -self.warning_distance or 
+                asteroid.position.y > SCREEN_HEIGHT + self.warning_distance)
     
     def draw_warning_indicator(self, screen, player, asteroid):
         """Draw a warning indicator at screen edge"""
