@@ -3,7 +3,9 @@ import pygame
 from dj import Dj
 from circleshape import CircleShape
 from shot import Shot
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import (PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, 
+                       PLAYER_SHOOT_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, PHYSICS_MOVEMENT,
+                       PLAYER_ACCELERATION, PLAYER_DRAG)
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -81,14 +83,22 @@ class Player(CircleShape):
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.acceleration = forward * PLAYER_SPEED * 3
-        self.velocity += self.acceleration * dt
-        # Cap speed
-        if self.velocity.length() > self.max_speed:
-            self.velocity = self.velocity.normalize() * self.max_speed
-        # Apply drag
-        self.velocity *= 0.98
-        self.position += self.velocity * dt
+        
+        if PHYSICS_MOVEMENT:
+            # Physics-based movement: acceleration + inertia + drag
+            # Ship continues moving when key is released (realistic space physics)
+            self.acceleration = forward * PLAYER_ACCELERATION
+            self.velocity += self.acceleration * dt
+            # Cap speed
+            if self.velocity.length() > self.max_speed:
+                self.velocity = self.velocity.normalize() * self.max_speed
+            # Apply drag
+            self.velocity *= PLAYER_DRAG
+            self.position += self.velocity * dt
+        else:
+            # Classic movement: direct position update
+            # Ship stops immediately when key is released (classic Asteroids behavior)
+            self.position += forward * PLAYER_SPEED * dt
 
     def rate_limit_shot(self, dt):
         self.shoot_timer -= dt

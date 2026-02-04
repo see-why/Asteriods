@@ -12,6 +12,13 @@ SHOT_RADIUS=5
 PLAYER_SHOOT_SPEED=500
 PLAYER_SHOOT_COOLDOWN=0.1
 
+# Movement physics settings
+# Set to True for inertia-based movement (ship continues moving when key released)
+# Set to False for classic direct movement (ship stops immediately when key released)
+PHYSICS_MOVEMENT = True
+PLAYER_ACCELERATION = 600  # Acceleration when thrusting (only used if PHYSICS_MOVEMENT = True)
+PLAYER_DRAG = 0.98  # Velocity multiplier per frame (0.98 = 2% drag, only used if PHYSICS_MOVEMENT = True)
+
 # Difficulty settings
 DIFFICULTY_EASY = "easy"
 DIFFICULTY_MEDIUM = "medium"
