@@ -1,5 +1,3 @@
-import pygame
-
 class ColorTheme:
     """Color scheme definitions"""
     CLASSIC = {

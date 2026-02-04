@@ -6,7 +6,6 @@ class SlowMotion:
     
     def activate(self, duration=3.0):
         """Activate slow motion for specified duration"""
-        self.active = True
         self.timer = duration
     
     def update(self, dt):

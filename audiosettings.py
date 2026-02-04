@@ -11,11 +11,17 @@ class AudioSettings:
         """Toggle background music on/off"""
         self.music_enabled = not self.music_enabled
         if self.music_enabled:
-            # Resume music
-            pass
+            try:
+                pygame.mixer.music.unpause()
+            except pygame.error:
+                # Ignore errors if mixer/music is not initialized
+                pass
         else:
-            # Pause music
-            pass
+            try:
+                pygame.mixer.music.pause()
+            except pygame.error:
+                # Ignore errors if mixer/music is not initialized
+                pass
         return self.music_enabled
     
     def set_sfx_volume(self, volume):

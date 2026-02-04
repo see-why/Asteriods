@@ -46,7 +46,7 @@ class Tutorial:
         text = self.get_current_text()
         font = pygame.font.Font(None, 36)
         text_surface = font.render(text, True, "yellow")
-        text_rect = text_surface.get_rect(center=(640, 100))
+        text_rect = text_surface.get_rect(center=(screen.get_width() // 2, 100))
         
         # Draw semi-transparent background
         bg_rect = text_rect.inflate(20, 10)

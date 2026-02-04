@@ -14,7 +14,11 @@ class Particle(CircleShape):
     
     def draw(self, screen):
         # Fade out as particle ages by reducing brightness
-        fade = self.lifetime / self.max_lifetime
+        if self.max_lifetime > 0:
+            fade = self.lifetime / self.max_lifetime
+        else:
+            fade = 0
+        
         if fade > 0:
             # Convert color name to RGB and scale brightness
             base_color = pygame.Color(self.color)

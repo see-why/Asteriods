@@ -1,5 +1,4 @@
 import pygame
-import random
 from asteroid import Asteroid
 from constants import ASTEROID_MAX_RADIUS
 
@@ -20,7 +19,10 @@ class BossAsteroid(Asteroid):
         # Draw health bar
         health_bar_width = self.radius * 2
         health_bar_height = 5
-        health_percent = self.health / self.max_health
+        if self.max_health > 0:
+            health_percent = self.health / self.max_health
+        else:
+            health_percent = 0.0
         
         bar_x = self.position.x - health_bar_width / 2
         bar_y = self.position.y - self.radius - 15
@@ -48,3 +50,8 @@ class BossAsteroid(Asteroid):
             velocity = pygame.Vector2(0, 1).rotate(angle) * 80
             asteroid = Asteroid(self.position.x, self.position.y, ASTEROID_MAX_RADIUS)
             asteroid.velocity = velocity
+            
+            # Ensure the new asteroid is added to any configured sprite groups
+            containers = getattr(Asteroid, "containers", None)
+            if containers:
+                asteroid.add(*containers)

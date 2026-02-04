@@ -1,5 +1,3 @@
-import time
-
 class GameStatistics:
     def __init__(self):
         self.total_shots_fired = 0
@@ -8,7 +6,6 @@ class GameStatistics:
         self.total_damage_taken = 0
         self.max_combo = 0
         self.playtime = 0
-        self.start_time = time.time()
     
     def update(self, dt):
         """Update playtime"""

@@ -20,9 +20,15 @@ class TimeAttackMode:
                 self.time_remaining = 0
                 self.finish()
     
-    def finish(self):
-        """End time attack mode"""
+    def finish(self, score=None):
+        """End time attack mode and optionally set final score"""
         self.active = False
+        if score is not None:
+            self.final_score = score
+    
+    def set_final_score(self, score):
+        """Set the final score for this time attack run"""
+        self.final_score = score
     
     def is_finished(self):
         """Check if time is up"""

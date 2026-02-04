@@ -4,6 +4,8 @@ from circleshape import CircleShape
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class PowerUp(CircleShape):
+    # Sprite groups this class's instances should automatically join.
+    # External code can assign groups to this, e.g. PowerUp.containers = (all_sprites, powerups)
     containers = ()
     
     def __init__(self, x, y, powerup_type):

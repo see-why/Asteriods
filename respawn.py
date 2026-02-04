@@ -26,12 +26,14 @@ class RespawnAnimation:
             return
         
         # Calculate animation progress (0 to 1)
-        progress = self.timer / self.duration
+        if self.duration <= 0:
+            progress = 1.0
+        else:
+            progress = self.timer / self.duration
         
         # Expanding circle effect
         max_radius = 60
         radius = int(max_radius * progress)
-        alpha = int(255 * (1 - progress))
         
         # Draw expanding circles
         if radius > 0:

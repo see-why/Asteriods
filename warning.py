@@ -28,8 +28,9 @@ class AsteroidWarning:
         
         direction = direction.normalize()
         
-        # Calculate position on screen edge
-        indicator_pos = player.position + direction * 300
+        # Calculate position on screen edge based on screen size and warning distance
+        max_radius = min(SCREEN_WIDTH, SCREEN_HEIGHT) / 2 - self.warning_distance
+        indicator_pos = player.position + direction * max_radius
         
         # Clamp to screen bounds
         indicator_pos.x = max(20, min(SCREEN_WIDTH - 20, indicator_pos.x))
