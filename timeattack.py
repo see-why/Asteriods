@@ -1,5 +1,3 @@
-import time
-
 class TimeAttackMode:
     def __init__(self, duration=120):
         self.duration = duration  # Time limit in seconds
