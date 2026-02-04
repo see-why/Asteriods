@@ -11,7 +11,16 @@ from dj import Dj
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    game_clock = pygame.time.Clock()
+    
+    # Main game loop - keeps running until window is closed
+    running = True
+    while running:
+        # Start a new game
+        running = play_game(screen, game_clock)
 
+def play_game(screen, game_clock):
+    """Play a single game session. Returns True to continue, False to quit."""
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -26,19 +35,30 @@ def main():
     field = AsteroidField()
 
     paused = False
+    game_over = False
 
     dt = 0
-    game_clock = pygame.time.Clock()
     lives = 5
     invulnerable_timer = 0  # Temporary invulnerability after being hit
     
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                return False  # Quit the entire game
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    paused = not paused
+                    if game_over:
+                        return True  # Restart the game
+                    else:
+                        paused = not paused
+
+        if game_over:
+            # Show game over screen
+            screen.fill("black")
+            print_game_over(screen, player, lives)
+            pygame.display.flip()
+            dt = game_clock.tick(60) / 1000
+            continue
 
         if not paused:
             # Update invulnerability timer
@@ -54,12 +74,7 @@ def main():
                     lives -= 1
                     invulnerable_timer = 200  # 2 seconds of invulnerability
                     if lives <= 0:
-                        game_over_timer = 5000
-                        print_game_over(screen, player)
-                        while game_over_timer > 0:
-                            game_over_timer -= (dt/ 1000)
-                            
-                        sys.exit()
+                        game_over = True
                     else:
                         player.reset_position()
 
@@ -94,17 +109,30 @@ def main():
         pygame.display.flip()
         dt = game_clock.tick(60) / 1000
 
-def print_game_over(screen, player):
-    screen.fill("black")
-    font = pygame.font.Font(None, 74)
-    text = font.render('GAME OVER', False, 'red')
-    text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+def print_game_over(screen, player, lives):
+    font_large = pygame.font.Font(None, 74)
+    font_medium = pygame.font.Font(None, 48)
+    font_small = pygame.font.Font(None, 36)
+    
+    # Game Over title
+    text = font_large.render('GAME OVER', False, 'red')
+    text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 80))
     screen.blit(text, text_rect)
     
-    score_text = font.render(f'Final Score: {player.score}', False, 'green')
-    score_rect = score_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 80))
+    # Final Score
+    score_text = font_medium.render(f'Final Score: {player.score}', False, 'green')
+    score_rect = score_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
     screen.blit(score_text, score_rect)
-    pygame.display.flip()
+    
+    # Restart instruction
+    restart_text = font_small.render('Press SPACE to Restart', False, 'yellow')
+    restart_rect = restart_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 80))
+    screen.blit(restart_text, restart_rect)
+    
+    # Quit instruction
+    quit_text = font_small.render('Close window to Quit', False, 'white')
+    quit_rect = quit_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 120))
+    screen.blit(quit_text, quit_rect)
 
 def print_pause(screen):
     font = pygame.font.Font(None, 74)
