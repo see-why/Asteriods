@@ -37,13 +37,13 @@ class PerformanceOptimizer:
     
     @staticmethod
     def cull_offscreen(objects, screen_width, screen_height, margin=200):
-        """Remove objects far outside screen bounds"""
-        visible = []
-        for obj in objects:
-            if (-margin < obj.position.x < screen_width + margin and
-                -margin < obj.position.y < screen_height + margin):
-                visible.append(obj)
-        return visible
+        """Remove objects far outside screen bounds by calling kill() on sprites"""
+        for obj in objects[:]:  # Iterate over a copy to safely modify during iteration
+            if not (-margin < obj.position.x < screen_width + margin and
+                    -margin < obj.position.y < screen_height + margin):
+                # Call kill() to remove sprite from all its sprite groups
+                if hasattr(obj, 'kill'):
+                    obj.kill()
     
     @staticmethod
     def optimize_draw_calls(sprites):
